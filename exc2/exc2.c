@@ -9,15 +9,16 @@ typedef void *(*state_func)();
 int c = 0;
 bool backDoorsLocked = false, frontDoorOpen = false, backDoorOpen = false;
 int carSpeed = 0; 
-int buttonPressed = 0; // 1 = lock // 2 = unlock // backdoor lock kid = 3/
 int buttonHandle = 0;
+int manualUnlocking = 0;
+int startBraking = 0, startAcelerating = 0;
+
 
 int kbhit(void);
 void *doorsLocked();
 void *doorsUnlocked();
 
-state_func last_state = doorsUnlocked;
-int manualUnlocking = 0;
+
 void *doorsLocked(){
 	fprintf(stderr, " DOORS LOCKED  ");
 	switch (buttonHandle){
@@ -39,26 +40,22 @@ void *doorsUnlocked(){
 			break;
 	}
 
-	// AUTO LOCK
+	// AUTO LOCKING
 	if (!carSpeed) manualUnlocking = 0;
 	if (carSpeed > LOCK_SPEED && !frontDoorOpen && !backDoorOpen && !manualUnlocking) return doorsLocked;
 	return doorsUnlocked;
 }
 
 void Commands(){
-
 	printf("\n\n  0 - Brake/Stop braking \n 1/2- Acelerate/Stop acelerating \n  3 - Open/Close Front door \n  4 - Open/Close Back door \n  5 - Lock button \n  6 - Unlock button \n  7 - Enable/Disable Kid protection \n");
-
 }
-int startBraking = 0, startAcelerating = 0;
+
 
 int main(){
-	state_func curr_state = doorsUnlocked, last_state = doorsUnlocked;
-	printf(" \n               PRESS 8 TO SEE COMMANDS\n\n Starting...\n");
+	state_func curr_state = doorsUnlocked;
+	printf(" \n               PRESS 8 TO SEE COMMANDS \n\n Starting...\n");
 	while(1){
-		last_state = curr_state;
 		curr_state = (state_func)(*curr_state)();
-		
 		fprintf(stderr, "| Carspeed: %d | Door open? %d | Back doors kid protection? %d \n", carSpeed,(frontDoorOpen || backDoorOpen),   backDoorsLocked);
 		if (carSpeed == 0) {startBraking =0 ;}
 		if (startBraking){ carSpeed--;}
@@ -104,7 +101,7 @@ int main(){
 				case '6': // UNLOCK BUTTON
 					if(curr_state == doorsLocked){ buttonHandle = 2; printf("   Unlocking doors...");}
 					break;
-				case '7':
+				case '7': // KID PROTECTION
 					if(!backDoorsLocked){
 						printf("   Kid protection enabled...");
 					}else
@@ -114,19 +111,9 @@ int main(){
 				case '8':
 					Commands();
 					break;
-				
-
-
-		
-
-
 			}
-			// startBraking = 0;
-			// startAcelerating = 0;
 			printf("\n");
 		}
-		
 	}
-	
 	return 0;
 }
