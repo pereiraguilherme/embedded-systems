@@ -8,15 +8,24 @@ typedef void *(*state_func)();
 
 int c = 0;
 bool lockedCockpit = true;
-int jetSpeed = 0; 
+int jetSpeed = 0, parachoteState =0;
 int ejectButtonHandle = 0;
 int startBraking = 0, startAcelerating = 0;
 
 
 int kbhit(void);
+//FIRST LEVEL FSM
 void *flyng();
-void *eject();
+//SECOND LEVEL FSM
+void *jetAccelerate();
+void *jetBreak();
 
+//FIRST LEVEL FSM
+void *eject();
+//SECOND LEVEL FSM
+void *unlockCockpit();
+void *ejectSeat();
+void *openParachute();
 
 void *flyng(){
 	fprintf(stderr, "FLYNG");
@@ -29,7 +38,7 @@ void *eject(){
 }
 
 void Commands(){
-	printf("\n\n  0 - Brake/Stop braking \n 1/2- Acelerate/Stop acelerating \n  3 - Open/Close Front door \n  4 - Open/Close Back door \n  5 - Lock button \n  6 - Unlock button \n  7 - Enable/Disable Kid protection \n");
+	printf("\n\n  0 - Brake/Stop braking \n 1/2 - Acelerate/Stop acelerating \n 3 - Eject button \n");
 }
 
 
